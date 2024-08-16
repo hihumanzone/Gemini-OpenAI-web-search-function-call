@@ -1,0 +1,13 @@
+{
+  "type": "module",
+  "dependencies": {
+    "openai": "*",
+    "axios": "*",
+    "cheerio": "*",
+    "dotenv": "*",
+    "GoogleGenerativeAI": "*"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
