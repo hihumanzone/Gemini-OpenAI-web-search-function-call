@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+console.log(await getResponse('Some news related to sports.'));import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import dotenv from 'dotenv';
@@ -233,7 +233,7 @@ async function getResponse(query) {
         const result = await manageToolCall(toolCall);
         toolCallsResults.push(result);
       }
-      fullResponce = fullResponce + `- [TOOL CALLS: ${response.response.functionCalls()?.map(tc => tc.name?.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')).join(', ')}]\n\n`;
+      fullResponce = fullResponce + `- [TOOL CALLS: ${processFunctionCallsNames(response)}]\n\n`;
       return await sendRequest(toolCallsResults);
     } else {
       fullResponce = fullResponce + '\n\n' + response.response.text();
@@ -260,9 +260,9 @@ async function manageToolCall(toolCall) {
     const function_call_result_message = [
       {
         functionResponse: {
-          name: name,
+          name: functionName,
           response: {
-            name: name,
+            name: functionName,
             content: errorMessage
           }
         }
@@ -270,6 +270,31 @@ async function manageToolCall(toolCall) {
     ];
     return function_call_result_message;
   }
+}
+
+function processFunctionCallsNames(response) {
+  const functionCalls = response.response.functionCalls();
+  return functionCalls
+    .map(tc => {
+      if (!tc.name) return '';
+
+      const formattedName = tc.name.split('_')
+        .map(word => {
+          if (isNaN(word)) {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+          }
+          return word;
+        })
+        .join(' ');
+
+      const formattedArgs = tc.args ? Object.entries(tc.args)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(', ') : '';
+
+      return formattedArgs ? `${formattedName} (${formattedArgs})` : formattedName;
+    })
+    .filter(name => name)
+    .join(', ');
 }
 
 console.log(await getResponse('Some news related to sports.'));
