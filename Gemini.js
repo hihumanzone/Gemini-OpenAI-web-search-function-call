@@ -1,4 +1,4 @@
-console.log(await getResponse('Some news related to sports.'));import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import dotenv from 'dotenv';
