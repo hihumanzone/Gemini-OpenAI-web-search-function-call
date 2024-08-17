@@ -239,7 +239,7 @@ async function getResponse(query) {
         toolCallsResults.push(result);
       }
       mainMessages.push(...toolCallsResults);
-      fullResponce = fullResponce.trim() + `\n\n- [TOOL CALLS: ${response.choices[0].message?.tool_calls?.map(tc => tc.function?.name?.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')).join(', ')}]\n\n` + (response.choices[0].message?.content || '');
+      fullResponce = fullResponce.trim() + `\n\n- [TOOL CALLS: ${processToolCallsNames(response)}]\n\n` + (response.choices[0].message?.content || '');
       return await sendRequest();
     } else {
       fullResponce = fullResponce.trim() + '\n\n' + response.choices[0].message?.content;
@@ -295,6 +295,39 @@ async function manageToolCall(toolCall) {
     };
     return function_call_result_message;
   }
+}
+
+function processToolCallsNames(response) {
+  const toolCalls = response.choices[0].message.tool_calls;
+  return toolCalls
+    .map(tc => {
+      if (!tc || !tc.function || !tc.function.name) return '';
+
+      const formattedName = tc.function.name.split('_')
+        .map(word => {
+          if (isNaN(word)) {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+          }
+          return word;
+        })
+        .join(' ');
+
+      let formattedArgs = '';
+      if (tc.function.arguments) {
+        try {
+          const argsObject = JSON.parse(tc.function.arguments);
+          formattedArgs = Object.entries(argsObject)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(', ');
+        } catch (e) {
+          console.error('Error parsing arguments:', e);
+        }
+      }
+
+      return formattedArgs ? `${formattedName} (${formattedArgs})` : formattedName;
+    })
+    .filter(name => name)
+    .join(', ');
 }
 
 console.log(await getResponse('Some news related to sports.'));
