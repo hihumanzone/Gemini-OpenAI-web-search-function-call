@@ -59,7 +59,7 @@ async function webSearch(args, name) {
         functionResponse: {
           name: name,
           response: {
-            name: name,
+            query: query,
             content: result
           }
         }
@@ -74,7 +74,7 @@ async function webSearch(args, name) {
         functionResponse: {
           name: name,
           response: {
-            name: name,
+            query: query,
             content: errorMessage
           }
         }
@@ -93,7 +93,7 @@ async function searchWebpage(args, name) {
         functionResponse: {
           name: name,
           response: {
-            name: name,
+            url: url,
             content: result
           }
         }
@@ -108,7 +108,7 @@ async function searchWebpage(args, name) {
         functionResponse: {
           name: name,
           response: {
-            name: name,
+            url: url,
             content: errorMessage
           }
         }
