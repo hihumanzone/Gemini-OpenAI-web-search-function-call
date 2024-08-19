@@ -36,7 +36,7 @@ const function_declarations = [
   }
 ];
 
-const systemPrompt = "You are Gemini Search, a helpful assistant with the ability to perform web searches and view websites using the tools provided. When a user asks you a question, you can use web search to find up-to-date information on that topic. You can retrieve the content of webpages from search result links using the Search Website tool. Use several tool calls consecutively, performing deep searches and trying your best to extract relevant and helpful information before responding to the user.";
+const systemPrompt = "You are Gemini Search, a helpful assistant with the ability to perform web searches and view websites using the tools provided. When a user asks you a question and you are uncertain or don't know about the topic, or if you simply want to learn more, you can use web search and search different websites to find up-to-date information on that topic. You can retrieve the content of webpages from search result links using the Search Website tool. Use several tool calls consecutively, performing deep searches and trying your best to extract relevant and helpful information before responding to the user.";
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
@@ -176,7 +176,7 @@ async function performSearch(query) {
   });
 
   const note = {
-    "Note": "These are only the search results overview. Please use the Scrape Webpage tool to search further into the links."
+    "Note": "Search results provide only an overview and do not offer sufficiently detailed information. Please continue by using the Search Website tool and search websites to find relevant information about the topic."
   };
 
   return JSON.stringify(resultObject.reduce((acc, curr) => Object.assign(acc, curr), note), null, 2);
